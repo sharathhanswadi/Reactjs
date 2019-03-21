@@ -1,91 +1,72 @@
 import React,{Component} from 'react';
+import {connect}  from 'react-redux';
 import CardList from '../components/CardList';
 import SearchBox from '../components/SearchBox';
 import Scroll from '../components/Scroll';
 
+import {setSearchField} from '../actions';
 
 
+const mapStateToProps = state =>{
+    return{
+          
+        searchField: state.searchField
+
+    }
+}
 
 
-class  App extends Component{
+const mapDispatchProps = (dispatch) =>{
 
+   return {
+       onSearchChange:(event) =>dispatch(setSearchField(event.target.value))
+    }
+}
+
+
+class  App extends Component{ded
     constructor() {
         
         super()
         this.state =  {
 
             robots:[],
-            searchfiled: ''
-        }
-     
+        }   
 
-    }
-     
+    }     
     componentDidMount(){
-
         fetch('https://jsonplaceholder.typicode.com/users')
         .then(response =>response.json())
         .then (users => {this.setState({robots:users})});
        
     }
-      
-
-    
-    onSearchChange =(event) => {
-
-
-        this.setState({searchfiled: event.target.value})
-
-
-        console.log(event.target.value);
-
 
   
-    
-
-
-
-    }
     render() {
 
-        const {robots,searchfiled} = this.state;
+        const {robots} = this.state;
+
+        const {searchField,onSearchChange} = this.props;
 
         const filterrobots = robots.filter(robots =>{
 
 
-            return robots.name.toLowerCase().includes(searchfiled.toLowerCase());
+            return robots.name.toLowerCase().includes(searchField.toLowerCase());
         })
+        return !robots.length ?
 
-
-    
-
-        if(!robots.length){
-
-            return <h1>Loading</h1>
-        }
-
-        else
+             <h1>Loading</h1>:
         
-        {
-
-
-            return (
+        (
                 <div className ='tc'>         
                   <h1>RoboFriends</h1>
-                  <SearchBox  SearchChange= {this.onSearchChange} />
+                  <SearchBox  SearchChange= {onSearchChange} />
                   <Scroll>
                   <CardList  robots  = {filterrobots} />
                   </Scroll>
-                </div>
-        
+                  </div>
             );
-
         }
-
-
- 
     }
-}
 
-
-export default App;
+export default connect(mapStateToProps,mapDispatchProps)(App);

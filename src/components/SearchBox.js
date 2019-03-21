@@ -1,7 +1,5 @@
 import  React from 'react';
 
-
-
 const SearchBox = ({ searchfiled ,SearchChange}) =>{
     return (
         <div className ='pa2'>
@@ -9,7 +7,5 @@ const SearchBox = ({ searchfiled ,SearchChange}) =>{
           
         </div>
     );
-
 }
-
 export default  SearchBox;
