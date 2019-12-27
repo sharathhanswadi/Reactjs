@@ -23,5 +23,13 @@ jobs:
             gsutil cp -r . gs://sharath-testing
 
 
-       
+
+workflows:
+  version: 2
+  dev_stage_pre-prod:
+    jobs:
+      - upload:
+          filters:
+            branches:
+              only: master       
 
