@@ -20,7 +20,7 @@ jobs:
       - run:
           name: try to  export variables
           command: |
-            PACKAGE_VERSION=1.5
+            PACKAGE_VERSION=1.4
             echo "export dbPasswordDev=$PACKAGE_VERSION" >> $BASH_ENV
       - run:
           name: check variables
