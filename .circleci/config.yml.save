@@ -12,11 +12,6 @@ jobs:
             curl -sL https://deb.nodesource.com/setup_10.x | bash -
             apt install nodejs && node -v && npm -v
       - run:
-          name: variable delartion
-          command: |
-             OLDER_VERSION=1.4
-             
-      - run:
           name:  Setup Google Cloud SDK
           command: |
             echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
@@ -25,10 +20,7 @@ jobs:
       - run: 
           name: copy the contents to google cloud storage bucket
           command:  | 
-            PACKAGE_VERSION=1.3
-            if [[ $OLDER_VERSION != $PACKAGE_VERSION ]];then 
-                   gsutil cp -r . gs://sharath-testing
-            fi 
+            gsutil cp -r . gs://$GOOGLE_STORAGE_BUCKET
 
 
 
@@ -39,4 +31,5 @@ workflows:
       - upload:
           filters:
             branches:
-              only: master 
+              only: master       
+
