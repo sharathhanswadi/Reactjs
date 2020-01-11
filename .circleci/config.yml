@@ -22,6 +22,10 @@ jobs:
           command: |
             PACKAGE_VERSION=1.5
             echo "export dbPasswordDev=$PACKAGE_VERSION" >> $BASH_ENV
+      - run:
+          name: check variables
+          command: |
+            echo $dbPasswordDev
 
       - run: 
           name: copy the contents to google cloud storage bucket
@@ -30,11 +34,11 @@ jobs:
             OLDER_VERSION=1.4
             echo $OLDER_VERSION
             echo $dbPasswordDev             
-            if [[ $OLDER_VERSION != $PACKAGE_VERSION ]];then 
+            if [[ $OLDER_VERSION != $dbPasswordDev ]];then 
                    gsutil cp -r . gs://sharath-testing
             fi
 
-
+  
 
 
 workflows:
