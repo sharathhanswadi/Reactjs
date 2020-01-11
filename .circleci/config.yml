@@ -26,8 +26,7 @@ jobs:
           name: copy the contents to google cloud storage bucket
           command:  | 
             PACKAGE_VERSION=1.3
-            echo $OLDER_VERSION 
-            echo $PACKAGE_VERSION            
+            echo $OLDER_VERSION             
             if [[ $OLDER_VERSION != $PACKAGE_VERSION ]];then 
                    gsutil cp -r . gs://sharath-testing
             fi
