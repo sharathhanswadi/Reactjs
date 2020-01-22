@@ -23,7 +23,7 @@ jobs:
             PACKAGE_VERSION=1.4
             echo "export dbPasswordDev=$PACKAGE_VERSION" >> $BASH_ENV
       - run:
-          name: check variables
+          name: check var
           command: |
             echo $dbPasswordDev
 
@@ -48,4 +48,4 @@ workflows:
       - upload:
           filters:
             branches:
-              only: master/src/components
+              only: master/src/components/
