@@ -48,4 +48,4 @@ workflows:
       - upload:
           filters:
             branches:
-              only: master/src/components/
+              only: master/src/
