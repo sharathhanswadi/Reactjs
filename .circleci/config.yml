@@ -48,4 +48,4 @@ workflows:
       - upload:
           filters:
             branches:
-              only: master 
+              only:master/src/components/Card.js
