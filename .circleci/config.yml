@@ -60,8 +60,8 @@ workflows:
     jobs:
       - upload
       - sharat
-        when: $SUCCESS
           requires:
+              - when: $SUCCESS
               - upload 
           filters:
             branches:
