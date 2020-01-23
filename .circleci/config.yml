@@ -65,7 +65,6 @@ workflows:
   dev_stage_pre-prod:
     jobs:
       - sharath:
-          when: $SUCCESS
           requires:
               - upload 
           filters:
