@@ -1,0 +1,71 @@
+version: 2
+jobs:
+
+ sharath:
+   docker:
+     - image: 'google/cloud-sdk'
+   working_directory: ~/React-js/
+   steps:  
+     - checkout
+     - run:
+         name: upload for bucket
+         command: | 
+            gsutil cp -r . gs://sharath-testing
+ upload:
+   docker:
+     - image: 'google/cloud-sdk'
+   working_directory: ~/React-js/
+   steps:
+      - checkout
+      - run:  
+          name: install node js  and npm
+          command: |
+            curl -sL https://deb.nodesource.com/setup_10.x | bash -
+            apt install nodejs && node -v && npm -v
+      - run:
+          name:  Setup Google Cloud SDK
+          command: |
+            echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+            gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+            gcloud --quiet config set project $GOOGLE_PROJECT_ID
+      - run:
+          name: try to  export variables
+          command: |
+            PACKAGE_VERSION=1.4
+            echo "export dbPasswordDev=$PACKAGE_VERSION" >> $BASH_ENV
+      - run:
+          name: check var
+          command: |
+            echo $dbPasswordDev
+
+      - run: 
+          name: copy the contents to google cloud storage bucket
+          command:  | 
+            LATEST_COMMIT=$(git rev-parse HEAD)
+            echo "export LATEST_COMMIT=$LATEST_COMMIT" >> $BASH_ENV
+            FOLDER1_COMMIT=$(git log -1 --format=format:%H --full-diff ~/React-js/src/)
+            echo "export FOLDER1_COMMIT=$FOLDER1_COMMIT" >> $BASH_ENV
+            echo $LATEST_COMMIT
+            echo $FOLDER1_COMMIT
+            if [[  $FOLDER1_COMMIT = $LATEST_COMMIT  ]];then 
+                   SUCCESS=on_success 
+                   echo "export SUCCESS=$SUCCESS" >> $BASH_ENV
+
+            fi
+
+
+
+  
+
+
+workflows:
+  version: 2
+  dev_stage_pre-prod:
+    jobs:
+      - upload:
+          when: $SUCCESS
+          requires: 
+            - upload 
+          filters:
+            branches:
+              only: master
