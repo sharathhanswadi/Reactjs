@@ -30,11 +30,9 @@ jobs:
       - run: 
           name: copy the contents to google cloud storage bucket
           command:  | 
-            PACKAGE_VERSION=1.3
-            OLDER_VERSION=1.4
-            echo $OLDER_VERSION
-            echo $dbPasswordDev             
-            if [[ $OLDER_VERSION != $dbPasswordDev ]];then 
+            LATEST_COMMIT=$(git rev-parse HEAD)
+            FOLDER1_COMMIT=$(git log -1 --format=format:%H --full-diff ~/src/)
+            if [[  $FOLDER1_COMMIT = $LATEST_COMMIT  ]];then 
                    gsutil cp -r . gs://sharath-testing
             fi
 
@@ -49,5 +47,3 @@ workflows:
           filters:
             branches:
               only: master
-            paths:
-              only: ~/src/components   
