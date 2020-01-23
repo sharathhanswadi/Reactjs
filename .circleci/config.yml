@@ -3,7 +3,7 @@ jobs:
   upload:
     docker:
       - image: 'google/cloud-sdk'
-    working_directory: ~/React-js
+    working_directory: ~/React-js/
     steps:
       - checkout
       - run:  
