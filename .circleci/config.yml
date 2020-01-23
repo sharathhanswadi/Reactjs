@@ -59,7 +59,7 @@ workflows:
   dev_stage_pre-prod:
     jobs:
       - upload
-      - sharat:
+      - sharat
       - when: $SUCCESS
           requires:
               - upload 
