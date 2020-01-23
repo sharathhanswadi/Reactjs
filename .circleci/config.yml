@@ -66,7 +66,7 @@ workflows:
     jobs:
       - sharath:
           when: $SUCCESS
-          requires
+          requires:
               - upload 
           filters:
             branches:
