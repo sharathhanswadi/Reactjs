@@ -65,7 +65,7 @@ workflows:
   dev_stage_pre-prod:
     jobs:
       - sharat
-      - upload
+      - upload:
           requires:
               - upload 
           filters:
