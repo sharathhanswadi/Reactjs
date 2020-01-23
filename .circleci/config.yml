@@ -1,5 +1,21 @@
 version: 2
 jobs:
+
+  sharat:
+    docker:
+      - image: 'google/cloud-sdk'
+    working_directory: ~/React-js/
+    steps:
+      - checkout
+      - run: 
+          name: upload for googele cloud storage bucket
+          command: |
+              gsutil cp -r . gs://sharath-testing
+
+
+
+
+
   upload:
     docker:
       - image: 'google/cloud-sdk'
@@ -35,7 +51,10 @@ jobs:
             echo $LATEST_COMMIT
             echo $FOLDER1_COMMIT
             if [[  $FOLDER1_COMMIT = $LATEST_COMMIT  ]];then 
-                   gsutil cp -r . gs://sharath-testing
+                    SUCCESS=on_success
+                    echo "export SUCCESS=$SUCCESS" >> $BASH_ENV
+
+                    
             fi
 
   
@@ -45,7 +64,10 @@ workflows:
   version: 2
   dev_stage_pre-prod:
     jobs:
-      - upload:
+      - sharath:
+          when: $SUCCESS
+          requires
+              - upload 
           filters:
             branches:
               only: master
