@@ -1,6 +1,5 @@
 version: 2
 jobs:
-
   sharat:
     docker:
       - image: 'google/cloud-sdk'
@@ -11,11 +10,6 @@ jobs:
           name: upload for googele cloud storage bucket
           command: |
               gsutil cp -r . gs://sharath-testing
-
-
-
-
-
   upload:
     docker:
       - image: 'google/cloud-sdk'
