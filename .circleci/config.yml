@@ -58,11 +58,14 @@ workflows:
   version: 2
   dev_stage_pre-prod:
     jobs:
-      - upload
-      - sharat
-          requires:
-              - when: $SUCCESS
-              - upload 
+      - sharat:
+          pre-steps:
+              - run: 
+                 command: |
+                   if [[  $FOLDER1_COMMIT = $LATEST_COMMIT  ]];then
+                        
+                        echo "success"
+                   fi
           filters:
             branches:
               only: master
