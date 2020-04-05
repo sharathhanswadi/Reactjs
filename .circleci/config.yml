@@ -1,71 +1,59 @@
-version: 2
-jobs:
-  sharat:
+version: 2 # use CircleCI 2.0
+jobs: # a collection of steps
+  build: # runs not using Workflows must have a `build` job as entry point
+    
+    working_directory: ~/circleci-demo-java-spring # directory where steps will run
+
+    docker: # run the steps with Docker
+      - image: circleci/openjdk:8-jdk-stretch # ...with this image as the primary container; this is where all `steps` will run
+
+    steps: # a collection of executable commands
+
+      - checkout # check out source code to working directory
+
+      - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
+          # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+          key: circleci-demo-java-spring-{{ checksum "pom.xml" }}
+      
+      - run: mvn dependency:go-offline # gets the project dependencies
+      
+      - save_cache: # saves the project dependencies
+          paths:
+            - ~/.m2
+          key: circleci-demo-java-spring-{{ checksum "pom.xml" }}
+      - run:
+          name: build package 
+          command: mvn package
+          #      - run:
+   
+  dev:
     docker:
-      - image: 'google/cloud-sdk'
-    working_directory: ~/React-js/
+      - image: google/cloud-sdk
+    working_directory: ~/sharath
     steps:
       - checkout
       - run: 
-          name: upload for googele cloud storage bucket
-          command: |
-              gsutil cp -r . gs://sharath-testing
-  upload:
-    docker:
-      - image: 'google/cloud-sdk'
-    working_directory: ~/React-js/
-    steps:
-      - checkout
-      - run:  
-          name: install node js  and npm
+          name: istall node
           command: |
             curl -sL https://deb.nodesource.com/setup_10.x | bash -
             apt install nodejs && node -v && npm -v
       - run:
-          name:  Setup Google Cloud SDK
+          name: add semanic
           command: |
-            echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
-            gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
-            gcloud --quiet config set project $GOOGLE_PROJECT_ID
-      - run:
-          name: try to  export variables
-          command: |
-            PACKAGE_VERSION=1.4
-            echo "export dbPasswordDev=$PACKAGE_VERSION" >> $BASH_ENV
-      - run:
-          name: check var
-          command: |
-            echo $dbPasswordDev
-
+            npm install -g yarn && yarn global add https://github.com/conveyal/maven-semantic-release.git#e5551beb4ec266bb520ae5ff155bc0d04acf8f05 semantic-release@15
       - run: 
-          name: copy the contents to google cloud storage bucket
-          command:  | 
-            LATEST_COMMIT=$(git rev-parse HEAD)
-            FOLDER1_COMMIT=$(git log -1 --format=format:%H --full-diff ~/React-js/src/)
-            echo $LATEST_COMMIT
-            echo $FOLDER1_COMMIT
-            if [[  $FOLDER1_COMMIT = $LATEST_COMMIT  ]];then 
-                    SUCCESS=on_success
-                    echo "export SUCCESS=$SUCCESS" >> $BASH_ENV
-
-                    
-            fi
-
-  
-
-
+          name: run 
+          command: |
+             semantic-release --prepare @conveyal/maven-semantic-release --publish @semantic-release/github,@conveyal/maven-semantic-release --verify-conditions @semantic-release/github,@conveyal/maven-semantic-release --verify-release @conveyal/maven-semantic-release --use-conveyal-workflow --dev-branch=master --additionalFilesToCommit CHANGELOG.md,readme.txt
 workflows:
   version: 2
-  dev_stage_pre-prod:
+  build:
     jobs:
-      - sharat:
-          pre-steps:
-              - run: 
-                 command: |
-                   if [[  $FOLDER1_COMMIT = $LATEST_COMMIT  ]];then
-                        
-                        echo "success"
-                   fi
+      - build:
+          filters:
+            branches:
+              only: master
+      - dev:
           filters:
             branches:
               only: master
